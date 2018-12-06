@@ -2,43 +2,91 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    defaultConfig {
-        applicationId "com.houseprice.calculate"
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
     signingConfigs {
-        release {
+        signingConfig  {
             storeFile file('E:/superdesk_key/buildingservice.jks')
             storePassword '123456'
             keyAlias 'building'
             keyPassword '123456'
         }
+    }
+    defaultConfig {
+        applicationId "com.houseprice.calculate"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.8.8"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.signingConfig
+    }
 
-        buildTypes {
-            release {
-                minifyEnabled false
-                signingConfig signingConfigs.release//打包命令行：gradlew assembleRelease
-                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-                applicationVariants.all { variant ->
-                    if (variant.buildType.name.equals('release')) {
-                        variant.outputs.each { output ->
-                            def outputFile = output.outputFile
-                            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                                def fileName = "${releaseTime()}_com.agriculture_${defaultConfig.versionName}.apk"
-                                output.outputFile = new File(outputFile.parent, fileName)
-                            }
-                        }
-                    }
-                }
-            }
 
+    buildTypes {
+        release {
+            buildConfigField 'String', 'API_SERVER_URL', RELEASE_API_SERVER_URL
+            buildConfigField 'String', 'API_SERVER_URL_MALL', RELEASE_API_SERVER_URL_MALL
+            buildConfigField 'String', 'IM_SERVER_HOST', RELEASE_IM_SERVER_HOST
+            buildConfigField 'int', 'IM_SERVER_PORT', RELEASE_IM_SERVER_PORT
+            buildConfigField "boolean", "LEO_DEBUG", RELEASE_LEO_DEBUG
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField 'String', 'API_SERVER_URL', RELEASE_API_SERVER_URL
+            buildConfigField 'String', 'API_SERVER_URL_MALL', RELEASE_API_SERVER_URL_MALL
+            buildConfigField 'String', 'IM_SERVER_HOST', RELEASE_IM_SERVER_HOST
+            buildConfigField 'int', 'IM_SERVER_PORT', RELEASE_IM_SERVER_PORT
+            buildConfigField "boolean", "LEO_DEBUG", RELEASE_LEO_DEBUG
         }
     }
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+
+
+    flavorDimensions "default"
+    productFlavors {
+        kuan {dimension "default"}
+        xiaomi {dimension "default"}
+        qh360 {dimension "default"}
+        baidu {dimension "default"}
+        wandoujia {dimension "default"}
+    }
+
+    productFlavors.all {
+        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+
+
+
+
+
+    allprojects {
+        repositories {
+            mavenCentral()
+            maven { url "https://jitpack.io" }
+        }
+    }
+//    //修改生成的apk名字
+//    applicationVariants.all {  output ->
+//        def relativeRootDir = output.packageApplication.outputDirectory.toPath()
+//                .relativize(rootDir.toPath()).toFile()
+//        output.outputFileName = new File( "$relativeRootDir/release", "daye.apk")
+//
+//    }
+
+
+
 }
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmm')
+    return formattedDate
+}
+def verCode = 14
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
