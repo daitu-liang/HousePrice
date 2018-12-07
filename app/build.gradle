@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     signingConfigs {
-        signingConfig  {
+        release  {
             storeFile file('E:/superdesk_key/buildingservice.jks')
             storePassword '123456'
             keyAlias 'building'
@@ -17,75 +17,23 @@ android {
         versionCode 1
         versionName "1.8.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.signingConfig
+
     }
 
 
     buildTypes {
         release {
-            buildConfigField 'String', 'API_SERVER_URL', RELEASE_API_SERVER_URL
-            buildConfigField 'String', 'API_SERVER_URL_MALL', RELEASE_API_SERVER_URL_MALL
-            buildConfigField 'String', 'IM_SERVER_HOST', RELEASE_IM_SERVER_HOST
-            buildConfigField 'int', 'IM_SERVER_PORT', RELEASE_IM_SERVER_PORT
-            buildConfigField "boolean", "LEO_DEBUG", RELEASE_LEO_DEBUG
+
             minifyEnabled true
             zipAlignEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug {
-            buildConfigField 'String', 'API_SERVER_URL', RELEASE_API_SERVER_URL
-            buildConfigField 'String', 'API_SERVER_URL_MALL', RELEASE_API_SERVER_URL_MALL
-            buildConfigField 'String', 'IM_SERVER_HOST', RELEASE_IM_SERVER_HOST
-            buildConfigField 'int', 'IM_SERVER_PORT', RELEASE_IM_SERVER_PORT
-            buildConfigField "boolean", "LEO_DEBUG", RELEASE_LEO_DEBUG
-        }
+
     }
-    dexOptions {
-        javaMaxHeapSize "2g"
-    }
-
-
-    flavorDimensions "default"
-    productFlavors {
-        kuan {dimension "default"}
-        xiaomi {dimension "default"}
-        qh360 {dimension "default"}
-        baidu {dimension "default"}
-        wandoujia {dimension "default"}
-    }
-
-    productFlavors.all {
-        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
-    }
-
-
-
-
-
-    allprojects {
-        repositories {
-            mavenCentral()
-            maven { url "https://jitpack.io" }
-        }
-    }
-//    //修改生成的apk名字
-//    applicationVariants.all {  output ->
-//        def relativeRootDir = output.packageApplication.outputDirectory.toPath()
-//                .relativize(rootDir.toPath()).toFile()
-//        output.outputFileName = new File( "$relativeRootDir/release", "daye.apk")
-//
-//    }
-
-
 
 }
-def getDate() {
-    def date = new Date()
-    def formattedDate = date.format('yyyyMMddHHmm')
-    return formattedDate
-}
-def verCode = 14
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
